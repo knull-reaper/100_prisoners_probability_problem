@@ -1,0 +1,5 @@
+numpy
+numba
+rich
+simple_term_menu
+tqdm
