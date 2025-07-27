@@ -1,8 +1,0 @@
-# Ignore the report file
-report.md
-
-# Ignore Python virtual environment
-venv/
-
-# Ignore pycache
-__pycache__/
