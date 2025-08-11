@@ -1,0 +1,37 @@
+[project]
+name = "prisoners"
+version = "0.1.0"
+description = "A simulation of the 100 prisoners problem."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Jules", email = "jules@example.com" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "typer[all]",
+    "numpy",
+    "numba",
+    "scipy",
+    "pytest",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "tqdm",
+    "networkx",
+    "streamlit",
+    "cupy-cuda12x",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/example/prisoners"
+
+[project.scripts]
+prisoners-sim = "prisoners.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
