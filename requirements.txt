@@ -1,5 +1,11 @@
+typer[all]
 numpy
 numba
-rich
-simple_term_menu
+scipy
+pytest
+pandas
+matplotlib
+seaborn
 tqdm
+networkx
+streamlit
