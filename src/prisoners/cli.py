@@ -4,6 +4,7 @@ import json
 from typing_extensions import Annotated
 from pathlib import Path
 from .simulate_cpu import simulate_cpu_numpy, simulate_cpu_numba
+from .simulate_cuda import simulate_cuda
 
 class Device(str, Enum):
     cpu = "cpu"
@@ -11,6 +12,7 @@ class Device(str, Enum):
 class Implementation(str, Enum):
     numpy = "numpy"
     numba = "numba"
+    cuda = "cuda"
 
 class Strategy(str, Enum):
     cycle = "cycle"
@@ -40,6 +42,15 @@ def simulate(
         results = simulate_cpu_numpy(n=n, trials=trials, alpha=alpha, seed=seed, ci=ci)
     elif impl == Implementation.numba:
         results = simulate_cpu_numba(n=n, trials=trials, alpha=alpha, seed=seed, ci=ci)
+    elif impl == Implementation.cuda:
+        # A simple check to provide a better error message if cupy is not installed
+        # The web dashboard will have a more robust check.
+        try:
+            from prisoners.simulate_cuda import simulate_cuda
+            results = simulate_cuda(n=n, trials=trials, alpha=alpha, seed=seed, ci=ci)
+        except ImportError:
+            typer.echo("Could not import cupy. Is it installed correctly?", err=True)
+            raise typer.Exit(1)
     else:
         # This case should not be reached due to the Enum
         typer.echo(f"Error: Unknown implementation '{impl.value}'", err=True)

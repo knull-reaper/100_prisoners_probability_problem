@@ -23,6 +23,7 @@ dependencies = [
     "tqdm",
     "networkx",
     "streamlit",
+    "cupy-cuda12x",
 ]
 
 [project.urls]

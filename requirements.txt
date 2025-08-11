@@ -9,3 +9,4 @@ seaborn
 tqdm
 networkx
 streamlit
+cupy-cuda12x

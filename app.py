@@ -5,7 +5,9 @@ from io import BytesIO
 
 # It's good practice to import functions from the installed package
 # This requires the package to be installed (e.g., `pip install -e .`)
-from prisoners.simulate_cpu import simulate_cpu_numba
+from prisoners.simulate_cpu import simulate_cpu_numba, simulate_cpu_numpy
+from prisoners.simulate_cuda import simulate_cuda
+from prisoners.utils import is_gpu_available
 from prisoners.viz import draw_permutation_graph
 
 # --- App Configuration ---
@@ -27,6 +29,24 @@ def get_session_state():
 with st.sidebar:
     st.title(" prisoners.ai")
     st.header("Simulation Settings")
+
+    # Check for GPU availability
+    GPU_AVAILABLE = is_gpu_available()
+
+    impl_options = ["numba", "numpy"]
+    if GPU_AVAILABLE:
+        impl_options.append("cuda")
+
+    impl = st.selectbox(
+        "Implementation",
+        impl_options,
+        help="Numba is fastest on CPU. CUDA uses the GPU."
+    )
+
+    if not GPU_AVAILABLE and impl == "cuda":
+        st.warning("GPU not available. Please select a CPU implementation.")
+    elif not GPU_AVAILABLE:
+        st.info("GPU not available. Running in CPU-only mode.")
 
     n = st.slider("Number of Prisoners (n)", min_value=2, max_value=200, value=100, step=2)
     alpha = st.slider("Fraction of Boxes to Open (alpha)", min_value=0.1, max_value=1.0, value=0.5, step=0.05)
@@ -50,7 +70,14 @@ get_session_state()
 
 if run_button:
     with st.spinner("Running simulation... this may take a moment."):
-        st.session_state.sim_results = simulate_cpu_numba(n=n, trials=trials, alpha=alpha, seed=seed)
+        if impl == 'cuda':
+            sim_func = simulate_cuda
+        elif impl == 'numpy':
+            sim_func = simulate_cpu_numpy
+        else: # default to numba
+            sim_func = simulate_cpu_numba
+
+        st.session_state.sim_results = sim_func(n=n, trials=trials, alpha=alpha, seed=seed)
         # Generate a single permutation to visualize
         rng = np.random.default_rng(seed)
         st.session_state.permutation = rng.permutation(n)

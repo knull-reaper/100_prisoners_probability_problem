@@ -56,6 +56,17 @@ def wilson_ci(successes: int, trials: int, confidence: float = 0.95) -> tuple[fl
     # Clamp values to [0, 1] range
     return (max(0.0, ci_low), min(1.0, ci_high))
 
+def is_gpu_available():
+    """
+    Safely checks if CuPy is installed and a GPU is available.
+    Catches both ImportError and runtime errors from CuPy.
+    """
+    try:
+        import cupy
+        return cupy.is_available()
+    except (ImportError, RuntimeError):
+        return False
+
 def get_longest_cycle(perm: np.ndarray) -> list[int]:
     """
     Finds the nodes belonging to the longest cycle in a permutation.
